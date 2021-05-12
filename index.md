@@ -1,7 +1,9 @@
 ## DataLibrary
 
 ```csharp
+
 // Web connection
+
 using Dapper;
 using MySql.Data.MySqlClient;
 using System;
@@ -36,6 +38,7 @@ namespace DataLibrary
 }
 
 // Interface
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -48,7 +51,9 @@ namespace DataLibrary
     }
 
 }
+
 // Local connection
+
 using Dapper;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,7 +84,9 @@ namespace DataLibrary
         }
     }
 }
+
 // Interface
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Data.OleDb;
