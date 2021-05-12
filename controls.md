@@ -1,5 +1,7 @@
 |[DataLibrary](datalibrary.md)|[Blazor Setups](setups.md)|[UpdateApp](updateapp.md)|[Manual Update](manualupdate.md)|[Controls](controls.md)|[Order info](orderinfo.md)|[Models](models.md)|
 
+---
+
 # Controls
 
 The controllers are used, for example, for manual updating and retrieval of order information.
@@ -78,3 +80,5 @@ This is used for date search...
     [Parameter]
     public EventCallback<ChangeEventArgs> OnSearchDateChange { get; set; }
 ```
+
+---
