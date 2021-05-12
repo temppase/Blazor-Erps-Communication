@@ -1,6 +1,6 @@
-# Manual Update
-
 |[DataLibrary](datalibrary.md)|[Blazor Setups](setups.md)|[UpdateApp](updateapp.md)|[Manual Update](manualupdate.md)|[Controls](controls.md)|[Order info](orderinfo.md)|[Models](models.md)|
+
+# Manual Update
 
 First the index page...
 ```html
