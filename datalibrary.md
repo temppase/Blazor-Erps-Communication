@@ -1,4 +1,5 @@
 # DataLibrary
+
 |[DataLibrary](datalibrary.md)|[Blazor Setups](setups.md)|[UpdateApp](updateapp.md)|[Manual Update](manualupdate.md)|[Controls](controls.md)|[Order info](orderinfo.md)|[Models](models.md)|
 
 I took the DataAccess library from Tim Corey and edited the LocalDataAccess library from it. I need both because the idea is to get web erp and local erp to communicate.
