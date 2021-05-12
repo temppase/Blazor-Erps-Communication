@@ -23,67 +23,69 @@ Nothing much...
 
 ## ManualUpdateTable Component
 ```html
+@page "/manualupdate"
 @inject ILocalDataAccess _datalocal
 @inject IDataAccess _dataweb
 @inject IConfiguration _config
+<h3 class="p-3
+    mb-2
+    bg-dark
+    text-white
+    text-center
+    font-weight-bold">
+    Manual update version 4.5
+</h3>
+    <OrderDate />
+<br />
+    @if (WebDataFiltered.Count != 0)
+    {
 
-@if (productListFiltered.Count != 0)
-{
 
-
-    <CustomTable Items="productListFiltered">
-        <TableHeader>
-            <CascadingValue Name="ManualUpdateTable" Value="BtnValueSku">
+        <CustomTable Items="WebDataFiltered">
+            <TableHeader>
                 <GridColum ColumTitle="SKU"
-                           OnSearchTextChange=
-                           "@(e =>SearchTermChanged(e, "SKU"))" 
-                           />
-            </CascadingValue>
-            <CascadingValue Name="ManualUpdateTable" Value="BtnValueName">
+                            OnSearchTextChange="@(e =>SearchTermChanged(e, "SKU"))" />
+
+
                 <GridColum ColumTitle="NAME"
-                           OnSearchTextChange=
-                           "@(e =>SearchTermChanged(e, "NAME"))" 
-                           />
+                            OnSearchTextChange="@(e =>SearchTermChanged(e, "NAME"))" />
                 <th>Stock</th>
-            </CascadingValue>
-        </TableHeader>
-        <RowTemplate Context="p">
-            <td>
-                <button @onclick="(e => BtnValueSku = p.SKU)">
+            </TableHeader>
+            <RowTemplate Context="p">
+                <a href="@($"manualupdate/{BtnValueSku = p.SKU.Replace("/","*").Replace(".","$")}")">
                     @p.SKU
-                </button>
-            </td>
-            <td>
-                <button @onclick="(e => BtnValueName = p.Name)">
+                </a>
+                <td>
                     @p.Name
-                </button>
-            </td>
-            <td>@p.Stock</td>
-        </RowTemplate>
-    </CustomTable>
-    <p>Count: @productListFiltered.Count Sku: @BtnValueSku</p>
-    
+                </td>
+                <td>@p.Stock</td>
+            </RowTemplate>
+        </CustomTable>
+        <p style="padding:2%">Count: @WebDataFiltered.Count</p>
 
-}
-else
-{
+    }
+    else
+    {
 
 
-    <h4>No Results</h4>
-    <button class="btn btn-primary" onClick="window.location.reload(true)">
-        Refresh
-    </button>
-}
-<CascadingValue Name="Sku" Value="BtnValueSku">
-    <SkuUpdate/>
-    <LocalSku/>
-</CascadingValue>
+        <h4>No Results</h4>
+        <button class="btn btn-primary" 
+                onClick="window.location.reload(true)">
+            Refresh
+        </button>
+    }
+
+
+
+<Footer Title="Manual update" />
 ```
 ### Code section
 ```csharp
-    public WebDbModel products { get; set; }
-    public List<WebDbModel> productList { get; set; }
-    public List<WebDbModel> productListFiltered { get; set; }
+    public DataClass dataclass = new DataClass();
+    public List<LocalDbModel> LocalData;
+    public WebDbModel Products { get; set; }
+    public List<WebDbModel> WebData { get; set; }
+    public List<WebDbModel> WebDataFiltered { get; set; }
     [Parameter]
     public string BtnValueSku { get; set; }
     [Parameter]
@@ -95,13 +97,13 @@ else
         Console.WriteLine($"Loading web data...");
         // Change this procedure to update
         string websql = $"CALL GetAllProducts(); ";
-        productList = await _dataweb.LoadWebData<WebDbModel,
+        WebData = await _dataweb.LoadWebData<WebDbModel,
             dynamic>(websql, new { },
-            _config.GetConnectionString("avecomfi_db"));
-        Console.WriteLine(productList.Count);
-        if (productListFiltered == null)
+            _config.GetConnectionString(dataclass.ConStringWeb));
+        Console.WriteLine(WebData.Count);
+        if (WebDataFiltered == null)
         {
-            productListFiltered = productList;
+            WebDataFiltered = WebData;
         }
     }
     private void SearchTermChanged(ChangeEventArgs changeEventArgs, string columTitle)
@@ -111,20 +113,151 @@ else
         Console.WriteLine(searchText);
         if (columTitle == "NAME")
         {
-            productListFiltered = productList.Where(p => p.Name.Contains
-            (searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+            WebDataFiltered = WebData.Where(p => p.Name.Contains
+        (searchText, StringComparison.OrdinalIgnoreCase)).ToList();
         }
         if (columTitle == "SKU")
         {
-            productListFiltered = productList.Where(p => p.SKU.Contains
-            (searchText)).ToList();
+            WebDataFiltered = WebData.Where(p => p.SKU.Contains
+        (searchText)).ToList();
         }
     }
 
 ```
 This component contains quite a lot of stuff. I’m not sure what would be the best way to unpack it but I try to open it as much as possible. 
-I'll start with the easiest way...but perhaps most importantly...
+I give some components their own page...
 
+
+SIteJoin component you won't see in code... but it's in the hyperlink.
+## SiteJoin Component
+```html
+
+@page "/manualupdate/{BtnValueSku}"
+@inject ILocalDataAccess _datalocal
+@inject IDataAccess _dataweb
+@inject IConfiguration _config
+
+<br />
+
+<div class="row">
+    <div class="col-6">
+        <h5>
+            Local:
+        </h5>
+        
+            @if (LocalDataFiltered != null)
+            {
+                @foreach (var l in LocalDataFiltered)
+                {
+                    <p style="font-weight:900">
+                        @l.Valmistaja @l.Tuote
+                    </p>
+                }
+            }
+
+
+        @if (LocalDataFiltered is null)
+        {
+            <p style="text-indent:10%; font-style:italic">Loading...</p>
+        }
+        else if (LocalDataFiltered.Count == 0)
+        {
+            <p style="text-indent:10%; font-style:italic">No results...</p>
+        }
+        else
+        {
+            @foreach (var l in LocalDataFiltered)
+            {
+                <p style="text-indent:10%">In stock: @l.Saldo</p>
+            }
+        }
+        <h5>
+            Web:        
+        </h5> 
+        <p style="font-weight:900">
+            @if (WebDataFiltered != null)
+            {
+                @foreach (var w in WebDataFiltered)
+                {
+                    @w.Name
+                }
+            }
+        </p>
+        @if (WebDataFiltered is null)
+        {
+            <p style="text-indent:10%; font-style:italic">Loading...</p>
+        }
+        else if (WebDataFiltered.Count == 0)
+        {
+            <p style="text-indent:10%; font-style:italic">No results...</p>
+        }
+        else
+        {
+            @foreach (var w in WebDataFiltered)
+            {
+                <p style="text-indent:10%">In stock: @w.Stock</p>
+            }
+        }
+    </div>
+    <div class="col-4">
+            <SkuUpdate Sku=@Sku/>
+
+    </div>
+</div>
+<Footer Title="Manual update SKU" />
+```
+### Code section
+```csharp
+    public DataClass dataclass = new DataClass();
+    public List<LocalDbModel> LocalData { get; set; }
+    public List<WebDbModel> WebData { get; set; }
+    public List<WebDbModel> WebDataFiltered { get; set; }
+    public List<LocalDbModel> LocalDataFiltered { get; set; }
+    [Parameter]
+    public string BtnValueSku { get; set; }
+    [Parameter]
+    public string Sku { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        Sku = BtnValueSku.Replace("*", "/").Replace("$",".");
+        Console.WriteLine($"Loading web data...");
+        // Change this procedure to update
+        string websql = $"CALL GetAllProducts(); ";
+        WebData = await _dataweb.LoadWebData<WebDbModel,
+            dynamic>(websql, new { },
+            _config.GetConnectionString(dataclass.ConStringWeb));
+        Console.WriteLine(WebData.Count);
+        await GetLocalData();
+        WebSku();
+        LocalSku();
+
+    }
+    private async Task GetLocalData()
+    {
+        Console.WriteLine(Sku);
+        Console.WriteLine($"Loading local data...");
+        string localsql = $"" +
+                $"SELECT * FROM Products " +
+                $"WHERE Webtuote = true AND Sku ='{Sku}';";
+        LocalData = await _datalocal.LoadData<LocalDbModel,
+        dynamic>(localsql, new { },
+        _config.GetConnectionString(dataclass.ConStringLocal));
+        Console.WriteLine(LocalData.Count);
+
+    }
+    private void WebSku()
+    {
+        Console.WriteLine(Sku);
+        WebDataFiltered = WebData.Where(p => p.SKU.Equals
+        (Sku)).ToList();
+    }
+    private void LocalSku()
+    {
+        Console.WriteLine(Sku);
+        LocalDataFiltered = LocalData.Where(p => p.Sku.Equals
+        (Sku)).ToList();
+    }
+```
 ## SkuUpdate Component
 ```html
 
@@ -161,6 +294,7 @@ I'll start with the easiest way...but perhaps most importantly...
 {
     <p>@ErrMesg</p>
 }
+
 ```
 ### Code section
 ```csharp
@@ -260,3 +394,5 @@ I'll start with the easiest way...but perhaps most importantly...
         }
     }
 ```
+
+I put the controllers I have used on their own page so it doesn’t get too confusing.
