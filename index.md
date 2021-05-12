@@ -2,8 +2,6 @@
 
 ```csharp
 
-// Web connection
-
 using Dapper;
 using MySql.Data.MySqlClient;
 using System;
@@ -37,7 +35,6 @@ namespace DataLibrary
 
 }
 
-// Interface
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -52,7 +49,6 @@ namespace DataLibrary
 
 }
 
-// Local connection
 
 using Dapper;
 using System.Collections.Generic;
@@ -85,7 +81,6 @@ namespace DataLibrary
     }
 }
 
-// Interface
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
