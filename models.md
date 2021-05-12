@@ -1,6 +1,6 @@
-# Models
-
 |[DataLibrary](datalibrary.md)|[Blazor Setups](setups.md)|[UpdateApp](updateapp.md)|[Manual Update](manualupdate.md)|[Controls](controls.md)|[Order info](orderinfo.md)|[Models](models.md)|
+
+# Models
 
 Something about models...
 
