@@ -1,4 +1,4 @@
-|[DataLibrary](datalibrary.md)|[UpdateApp](updateapp.md)|[Manual Update](manualupdate.md)|
+|[DataLibrary](datalibrary.md)|[Blazor Setups](setups.md)|[UpdateApp](updateapp.md)|[Manual Update](manualupdate.md)|
 
 ### A few words about the project and its developer...
 
