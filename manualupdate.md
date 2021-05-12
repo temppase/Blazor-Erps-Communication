@@ -1,5 +1,7 @@
 |[DataLibrary](datalibrary.md)|[Blazor Setups](setups.md)|[UpdateApp](updateapp.md)|[Manual Update](manualupdate.md)|[Controls](controls.md)|[Order info](orderinfo.md)|[Models](models.md)|
 
+---
+
 # Manual Update
 
 First the index page...
@@ -399,3 +401,5 @@ SIteJoin component you won't see in code... but it's in the hyperlink.
 ```
 
 I put the controllers I have used on their own page so it doesn’t get too confusing.
+
+---
